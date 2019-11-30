@@ -1,5 +1,6 @@
 package com.zhangcy.data;
 
+import com.zhangcy.java.data.structure.ch05.DoubleLinkedListX;
 import com.zhangcy.java.data.structure.ch05.FirstLastLinkedList;
 import com.zhangcy.java.data.structure.ch05.LinkedListX;
 import com.zhangcy.java.data.structure.ch05.SortedListX;
@@ -11,6 +12,43 @@ import java.util.List;
 
 @Slf4j
 public class Ch05LinkTest {
+
+    /**
+     * 测试双端链表
+     */
+    @Test
+    public void testDoubleLinkNode() {
+        // 初始化双端链表
+        DoubleLinkedListX<String> doubleLinkedListX = new DoubleLinkedListX<>();
+        doubleLinkedListX.insertFirst("2");
+        doubleLinkedListX.insertFirst("1");
+        doubleLinkedListX.insertFirst("-1");
+        doubleLinkedListX.insertFirst("5");
+        doubleLinkedListX.display();
+        doubleLinkedListX.insertLast("abc");
+        doubleLinkedListX.insertLast("def");
+        doubleLinkedListX.display();
+        doubleLinkedListX.insertAfter("def", "hi");
+        doubleLinkedListX.insertAfter("ha", "hei");
+        doubleLinkedListX.insertAfter("2", "i3");
+        doubleLinkedListX.display();
+        while (!doubleLinkedListX.isEmpty()) {
+            System.out.println(doubleLinkedListX.deleteLast());
+        }
+        doubleLinkedListX.display();
+        doubleLinkedListX.insertFirst("1");
+        doubleLinkedListX.insertFirst("1");
+        doubleLinkedListX.insertFirst("1");
+        doubleLinkedListX.insertFirst("1");
+        doubleLinkedListX.insertFirst("1");
+        while (!doubleLinkedListX.isEmpty()) {
+            boolean result = doubleLinkedListX.deleteKey("1");
+            if(!result) {
+                break;
+            }
+            System.out.println(result);
+        }
+    }
 
     /**
      * 实现插入排序 通过有序链表的方式
