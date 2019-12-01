@@ -1,10 +1,13 @@
 package com.zhangcy.java.data.structure.ch05;
 
+import lombok.Getter;
+
 /**
  * 单链表 单向链表 适合头插法
  * 可以使用尾插插入数据
  * @author zhangcy
  */
+@Getter
 public class LinkedListX<T> {
 
     /**
@@ -96,5 +99,14 @@ public class LinkedListX<T> {
         LinkNode<T> newNode;
         newNode = new LinkNode<>(data, this.first.getNext());
         this.first.setNext(newNode);
+    }
+
+    /**
+     * 由链表内部直接返回迭代器是非常合理的
+     * 迭代器在实际使用时一般直接作为集合的内部类去实现
+     * 现在直接先作为外部类去做
+     */
+    public LinkedListIterator<T> iterator() {
+        return new LinkedListIterator<>(this);
     }
 }
