@@ -15,7 +15,7 @@ public class Ch06RecursiveTest {
      */
     @Test
     public void testAnagram() {
-        String str = "abc";
+        String str = "abcd";
         AnagramApp anagramApp = new AnagramApp(str);
         anagramApp.doAnagram(str.length());
     }
