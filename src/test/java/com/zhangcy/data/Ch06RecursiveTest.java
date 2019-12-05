@@ -1,15 +1,22 @@
 package com.zhangcy.data;
 
-import com.zhangcy.java.data.structure.ch06.AnagramApp;
-import com.zhangcy.java.data.structure.ch06.BinarySearchApp;
-import com.zhangcy.java.data.structure.ch06.FactorialApp;
-import com.zhangcy.java.data.structure.ch06.TriangleApp;
+import com.zhangcy.java.data.structure.ch06.*;
 import org.junit.Test;
 
 /**
  * 测试第六章递归
  */
 public class Ch06RecursiveTest {
+
+    /**
+     * 测试汉诺塔问题
+     */
+    @Test
+    public void testTower() {
+        int num = 3;
+        TowerApp towerApp = new TowerApp(num);
+        towerApp.moveTower('A', 'B', 'C');
+    }
 
     /**
      * 测试递归的二分查找
