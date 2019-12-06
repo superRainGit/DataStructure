@@ -9,7 +9,7 @@ public class MergeApp<T extends Comparable<T>> {
     /**
      * 数据存储位置
      */
-    private Object[] arr;
+    private Comparable[] arr;
 
     /**
      * 目前元素的长度
@@ -24,7 +24,7 @@ public class MergeApp<T extends Comparable<T>> {
     /**
      * 数组
      */
-    private Object[] temp;
+    private Comparable[] temp;
 
     /**
      * 构造器
@@ -32,15 +32,25 @@ public class MergeApp<T extends Comparable<T>> {
     public MergeApp(int maxSize) {
         this.maxSize = maxSize;
         this.size = 0;
-        this.arr = new Object[maxSize];
-        this.temp = new Object[maxSize];
+        this.arr = new Comparable[maxSize];
+        this.temp = new Comparable[maxSize];
+    }
+
+    /**
+     * 插入数据
+     */
+    public void insert(T data) {
+        if(this.size > this.maxSize) {
+            throw new IllegalArgumentException("array is full");
+        }
+        this.arr[size++] = data;
     }
 
     /**
      * 归并排序
      */
     public void mergeSort() {
-
+        this.recurMergeSort(0, size - 1);
     }
 
     /**
@@ -48,7 +58,7 @@ public class MergeApp<T extends Comparable<T>> {
      * @param head 从哪个位置开始
      * @param tail 到哪个位置结束
      */
-    public void recurMergeSort(int head, int tail) {
+    private void recurMergeSort(int head, int tail) {
         if(head == tail) {
             return;
         }
@@ -59,16 +69,47 @@ public class MergeApp<T extends Comparable<T>> {
         // 再合并右边的元素
         recurMergeSort(mid + 1, tail);
         // 最后需要合并两边的元素
+        merge(head, mid, tail);
     }
 
     /**
      * 合并当前数组指定范围内的有序数组
+     * 要注意的是这个方法的参数是数组的下标
      * @param head 左边数组的位置
      * @param mid 中间数据的位置
      * @param tail 右边数组的位置
      */
     private void merge(int head, int mid, int tail) {
-        // 需要生成新的数组
+        // 进行两个有序数组的合并
+        int currA = head;
+        int currB = mid + 1;
+        int currC = head;
+        while(currA <= mid && currB <= tail) {
+            if(this.arr[currA].compareTo(this.arr[currB]) > 0) {
+                temp[currC++] = this.arr[currB++];
+            } else {
+                temp[currC++] = this.arr[currA++];
+            }
+        }
+        while(currA <= mid) {
+            temp[currC++] = this.arr[currA++];
+        }
+        while(currB <= tail) {
+            temp[currC++] = this.arr[currB++];
+        }
+        // 需要将原数组元素进行覆盖
+        System.arraycopy(temp, head, arr, head, tail - head + 1);
+    }
+
+    /**
+     * 展示归并排序之后数组的元素
+     */
+    public void display() {
+        System.out.print("[");
+        for(int i = 0; i < size; i++) {
+            System.out.print(this.arr[i] + " ");
+        }
+        System.out.println("]");
     }
 
     /**
