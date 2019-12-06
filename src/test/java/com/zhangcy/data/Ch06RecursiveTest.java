@@ -3,10 +3,23 @@ package com.zhangcy.data;
 import com.zhangcy.java.data.structure.ch06.*;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 /**
  * 测试第六章递归
  */
 public class Ch06RecursiveTest {
+
+    /**
+     * 测试归并排序
+     */
+    @Test
+    public void testMerge() {
+        Integer[] arrA = {23, 47, 81, 95};
+        Integer[] arrB = {7, 14, 39, 55, 62, 74};
+        MergeApp<Integer> mergeApp = new MergeApp<>();
+        Arrays.asList(mergeApp.merge(arrA, arrB)).forEach(System.out::println);
+    }
 
     /**
      * 测试汉诺塔问题
