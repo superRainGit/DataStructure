@@ -1,13 +1,74 @@
 package com.zhangcy.data;
 
-import com.zhangcy.java.data.structure.ch06.FactorialApp;
-import com.zhangcy.java.data.structure.ch06.TriangleApp;
+import com.zhangcy.java.data.structure.ch06.*;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 /**
  * 测试第六章递归
  */
 public class Ch06RecursiveTest {
+
+    /**
+     * 测试归并排序
+     */
+    @Test
+    public void testMerge() {
+        int maxSize = 20;
+        Integer[] arrA = {23, 47, 81, 95};
+        Integer[] arrB = {7, 14, 39, 55, 62, 74};
+        MergeApp<Integer> mergeApp = new MergeApp<>(maxSize);
+        Arrays.asList(mergeApp.merge(arrA, arrB)).forEach(System.out::println);
+        mergeApp.insert(23);
+        mergeApp.insert(47);
+        mergeApp.insert(81);
+        mergeApp.insert(95);
+        mergeApp.insert(7);
+        mergeApp.insert(14);
+        mergeApp.insert(39);
+        mergeApp.insert(55);
+        mergeApp.insert(62);
+        mergeApp.insert(74);
+        mergeApp.mergeSort();
+        mergeApp.display();
+    }
+
+    /**
+     * 测试汉诺塔问题
+     */
+    @Test
+    public void testTower() {
+        int num = 3;
+        TowerApp towerApp = new TowerApp(num);
+        towerApp.moveTower('A', 'B', 'C');
+    }
+
+    /**
+     * 测试递归的二分查找
+     */
+    @Test
+    public void testBinarySearch() {
+        int maxSize = 5;
+        BinarySearchApp<Integer> searchApp = new BinarySearchApp<>(maxSize);
+        searchApp.insert(2);
+        searchApp.insert(1);
+        searchApp.insert(3);
+        searchApp.insert(-1);
+        searchApp.insert(5);
+        searchApp.display();
+        System.out.println(searchApp.find(4));
+    }
+
+    /**
+     * 测试单词的全排列组合
+     */
+    @Test
+    public void testAnagram() {
+        String str = "abcd";
+        AnagramApp anagramApp = new AnagramApp(str);
+        anagramApp.doAnagram(str.length());
+    }
 
     /**
      * 测试阶乘
