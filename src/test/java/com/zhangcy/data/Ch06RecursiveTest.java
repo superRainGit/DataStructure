@@ -15,10 +15,23 @@ public class Ch06RecursiveTest {
      */
     @Test
     public void testMerge() {
+        int maxSize = 20;
         Integer[] arrA = {23, 47, 81, 95};
         Integer[] arrB = {7, 14, 39, 55, 62, 74};
-        MergeApp<Integer> mergeApp = new MergeApp<>();
+        MergeApp<Integer> mergeApp = new MergeApp<>(maxSize);
         Arrays.asList(mergeApp.merge(arrA, arrB)).forEach(System.out::println);
+        mergeApp.insert(23);
+        mergeApp.insert(47);
+        mergeApp.insert(81);
+        mergeApp.insert(95);
+        mergeApp.insert(7);
+        mergeApp.insert(14);
+        mergeApp.insert(39);
+        mergeApp.insert(55);
+        mergeApp.insert(62);
+        mergeApp.insert(74);
+        mergeApp.mergeSort();
+        mergeApp.display();
     }
 
     /**

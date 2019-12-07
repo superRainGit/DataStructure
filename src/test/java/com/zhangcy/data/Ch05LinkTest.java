@@ -1,9 +1,6 @@
 package com.zhangcy.data;
 
-import com.zhangcy.java.data.structure.ch05.DoubleLinkedListX;
-import com.zhangcy.java.data.structure.ch05.FirstLastLinkedList;
-import com.zhangcy.java.data.structure.ch05.LinkedListX;
-import com.zhangcy.java.data.structure.ch05.SortedListX;
+import com.zhangcy.java.data.structure.ch05.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
@@ -12,6 +9,45 @@ import java.util.List;
 
 @Slf4j
 public class Ch05LinkTest {
+
+    /**
+     * 测试5.3 和 5.5问题
+     */
+    @Test
+    public void testCh0505() {
+        // 人数
+        int personNum = 7;
+        // 从几开始报数
+        int select = 4;
+        LoopLinkedList<Integer> loopLinkedList = new LoopLinkedList<>();
+        // 数据导入
+        for (int i = 1; i <= personNum; i++) {
+            loopLinkedList.insert(i);
+        }
+        loopLinkedList.display();
+        // 循环整个循环链表 看出链表的顺序
+        while(!loopLinkedList.isEmpty()) {
+            // 为什么要到1为止 因为delete删除的是当前元素的下一个元素
+            // 因为在单链表中 删除当前节点 如果不循环的话不知道当前链表的上一个元素是什么
+            while(select-- != 1) {
+                loopLinkedList.step();
+            }
+            System.out.println(loopLinkedList.delete());
+            select = 4;
+        }
+    }
+
+    /**
+     * 测试迭代器
+     */
+    @Test
+    public void testIterator() {
+        LinkedListX<String> linkedListX = new LinkedListX<>();
+        LinkedListIterator<String> iterator = linkedListX.iterator();
+        iterator.insertAfter("1");
+        iterator.insertBefore("2");
+        linkedListX.display();
+    }
 
     /**
      * 测试双端链表
