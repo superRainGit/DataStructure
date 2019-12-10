@@ -30,6 +30,7 @@ public class Ch06RecursiveTest {
         mergeApp.insert(55);
         mergeApp.insert(62);
         mergeApp.insert(74);
+        mergeApp.display();
         mergeApp.mergeSort();
         mergeApp.display();
     }
