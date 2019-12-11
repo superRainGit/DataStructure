@@ -11,6 +11,16 @@ import java.util.Arrays;
 public class Ch06RecursiveTest {
 
     /**
+     * 测试使用栈的方式代替实现递归
+     */
+    @Test
+    public void testStackRecursive() {
+        int num = 5;
+        StackTriangleApp app = new StackTriangleApp(num);
+        System.out.println(app.recTriangle());
+    }
+
+    /**
      * 测试归并排序
      */
     @Test
