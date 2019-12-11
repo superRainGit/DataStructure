@@ -9,7 +9,7 @@ public class StackApp<T> {
     /**
      * 存放的数据
      */
-    private T[] arr;
+    private Object[] arr;
 
     /**
      * 栈的最大长度
@@ -28,6 +28,7 @@ public class StackApp<T> {
     public StackApp(int maxSize) {
         this.maxSize = maxSize;
         this.top = -1;
+        this.arr = new Object[this.maxSize];
     }
 
     /**
@@ -49,7 +50,7 @@ public class StackApp<T> {
         if(this.top == -1) {
             throw new IllegalArgumentException("stack is empty");
         }
-        return arr[this.top--];
+        return (T) arr[this.top--];
     }
 
     /**
@@ -60,6 +61,6 @@ public class StackApp<T> {
         if(this.top == -1) {
             throw new IllegalArgumentException("stack is empty");
         }
-        return arr[this.top];
+        return (T) arr[this.top];
     }
 }
