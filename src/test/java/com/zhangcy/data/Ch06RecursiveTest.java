@@ -11,6 +11,17 @@ import java.util.Arrays;
 public class Ch06RecursiveTest {
 
     /**
+     * 测试递归的计算X的Y次幂的结果
+     */
+    @Test
+    public void testPower() {
+        int base = 2;
+        int power = 9;
+        PowerApp powerApp = new PowerApp(base, power);
+        powerApp.power();
+    }
+
+    /**
      * 测试使用栈的方式代替实现递归
      */
     @Test
