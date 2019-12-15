@@ -4,11 +4,23 @@ import com.zhangcy.java.data.structure.ch06.*;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 测试第六章递归
  */
 public class Ch06RecursiveTest {
+
+    /**
+     * 测试背包问题
+     */
+    @Test
+    public void testPack() {
+        int expectWeight = 100;
+        List<Integer> arr = Arrays.asList(11, 8, 7, 6, 5, 9);
+        PackApp packApp = new PackApp(expectWeight, arr);
+        packApp.find();
+    }
 
     /**
      * 测试递归的计算X的Y次幂的结果
