@@ -41,6 +41,16 @@ public class PackApp {
     private int findIndex;
 
     /**
+     * 表明从哪个位置开始的第一个查找
+     */
+    private int firstFind;
+
+    /**
+     * 查找的次数
+     */
+    private int findCount = 0;
+
+    /**
      * 构造器
      * @param expectWeight 期望的重量值
      * @param allGoods 所有的货物的质量
@@ -65,7 +75,7 @@ public class PackApp {
      */
     public void recursiveFind(int expectWeight, Integer[] allGoods, int fistIndex) {
         // 那么需要方法的返回
-        if(recursiveCount == allGoods.length - 1) {
+        if(recursiveCount == allGoods.length) {
             log.error("Can not find any right");
         } else {
             // 目前的写法是不正确的
@@ -81,14 +91,19 @@ public class PackApp {
                 } else {
                     // 表明尽力了也没有找到 此时应该直接return
                     log.error("Find: {}, but not find perfect!", tempGoodList);
-                    // 此时应该将当前的数组进行左移
-                    int firstEle = allGoods[0];
+                    /*
+                     * 此时应该将当前的数组进行左移
+                     * int firstEle = allGoods[0];
+                     * System.arraycopy(allGoods, 1, allGoods, 0, allGoods.length - 1);
+                     * allGoods[allGoods.length - 1] = firstEle;
+                     * 换完就需要return了 方便进入下面的循环
+                     * recursiveFind(this.expectWeight, allGoods, 0);
+                     */
+                    // 理论上不需要数组的转换
+                    // 当以第一个找完了所有的数据
                     tempGoodList.clear();
-                    System.arraycopy(allGoods, 1, allGoods, 0, allGoods.length - 1);
-                    allGoods[allGoods.length - 1] = firstEle;
                     recursiveCount++;
-                    // 换完就需要return了 方便进入下面的循环
-                    recursiveFind(this.expectWeight, allGoods, 0);
+                    recursiveFind(this.expectWeight, allGoods, ++this.firstFind);
                 }
             } else {
                 // 每次获取数组剩余的元素中的指定位置元素的值
@@ -96,29 +111,43 @@ public class PackApp {
                 // 如果期望值比这个元素大 那么需要进行递归的查找
                 if(expectWeight > first) {
                     log.info("Find: {}, {} It is small than {}!", tempGoodList, first, expectWeight);
+                    // 如果当前数据为空 表明从开始进行的查找
+                    if(CollUtil.isEmpty(this.tempGoodList)) {
+                        this.firstFind = fistIndex;
+                    }
                     tempGoodList.add(first);
                     findIndex = fistIndex;
                     recursiveFind(expectWeight - first, allGoods, fistIndex + 1);
+                    this.findCount++;
                 } else if(expectWeight == first) {
                     // 如果期望值正好等于指定位置元素的值
                     // 那么此时已经找到了符合条件的组合
                     // 应该怎么办?
                     // 先直接return
+                    /**
+                     * 其实这个地方也没有数组复制的必要
+                     * 因为当找到数据的时候 就已经可以走下一个逻辑了
+                     * tempGoodList.add(first);
+                     * tempGoodList.clear();
+                     * int firstEle = allGoods[0];
+                     * System.arraycopy(allGoods, 1, allGoods, 0, allGoods.length - 1);
+                     * allGoods[allGoods.length - 1] = firstEle;
+                     */
                     log.info("Find: {}, {} It is perfect!", tempGoodList, first);
-                    tempGoodList.add(first);
-                    tempGoodList.clear();
-                    int firstEle = allGoods[0];
-                    System.arraycopy(allGoods, 1, allGoods, 0, allGoods.length - 1);
-                    allGoods[allGoods.length - 1] = firstEle;
-                    recursiveCount++;
                     // 换完就需要return了 方便进入下面的循环
-                    recursiveFind(this.expectWeight, allGoods, 0);
+                    this.findCount++;
+                    recursiveFind(expectWeight, allGoods, fistIndex + 1);
                 } else {
                     // 如果大于 那么需要摒弃当前的元素 直接找下一个元素
                     log.info("Find: {}, {} It is bigger than {}!", tempGoodList, first, expectWeight);
                     recursiveFind(expectWeight, allGoods, fistIndex + 1);
+                    this.findCount++;
                 }
             }
         }
+    }
+
+    public void display() {
+        log.error("Finally, I find {} times", this.findCount);
     }
 }

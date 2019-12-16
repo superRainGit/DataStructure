@@ -16,10 +16,11 @@ public class Ch06RecursiveTest {
      */
     @Test
     public void testPack() {
-        int expectWeight = 100;
-        List<Integer> arr = Arrays.asList(11, 8, 7, 6, 5, 9);
+        int expectWeight = 20;
+        List<Integer> arr = Arrays.asList(11, 8, 7, 6, 5);
         PackApp packApp = new PackApp(expectWeight, arr);
         packApp.find();
+        packApp.display();
     }
 
     /**
