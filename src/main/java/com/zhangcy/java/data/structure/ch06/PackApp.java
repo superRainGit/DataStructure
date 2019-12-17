@@ -36,11 +36,6 @@ public class PackApp {
     private int recursiveCount = 0;
 
     /**
-     * 目前数组等待的位置
-     */
-    private int findIndex;
-
-    /**
      * 表明从哪个位置开始的第一个查找
      */
     private int firstFind;
@@ -49,6 +44,33 @@ public class PackApp {
      * 查找的次数
      */
     private int findCount = 0;
+
+    /**
+     * 目前查找的数组的左边索引
+     */
+    private int leftIndex;
+
+    /**
+     * 目前查找的数组的右边索引
+     */
+    private int rightIndex;
+
+    /**
+     * 目前正在找的元素
+     */
+    @Deprecated
+    private int findIndex;
+
+    /**
+     * tempList里面最后一个元素的位置
+     * 有可能是跨数组的索引的
+     */
+    private int lastIndex;
+
+    /**
+     * 在最后一个元素之前的元素的结点
+     */
+    private int previousLastIndex;
 
     /**
      * 构造器
@@ -75,14 +97,30 @@ public class PackApp {
      */
     public void recursiveFind(int expectWeight, Integer[] allGoods, int fistIndex) {
         // 那么需要方法的返回
-        if(recursiveCount == allGoods.length) {
+        if(this.leftIndex == allGoods.length) {
             log.error("Can not find any right");
         } else {
             // 目前的写法是不正确的
-            if(fistIndex == this.allGoods.length) {
+            if(this.rightIndex == this.allGoods.length - 1) {
+                // 判断一下当前预期的索引的位置在哪里
+                if(this.lastIndex != this.allGoods.length - 1) {
+                    // 如果不在末尾 那么需要将目前的元素进行移动
+                    this.rightIndex = ++this.lastIndex;
+                    recursiveFind(expectWeight + allGoods[this.previousLastIndex], allGoods, this.lastIndex);
+                } else {
+                    // 如果找到了最后还是没找到 需要将当前的前一个元素进行修改
+                    this.rightIndex = this.previousLastIndex--;
+                    this.lastIndex = this.rightIndex;
+                    // 如果左边等于右边 那么表明以第一个元素开始的已经找完了
+                    if(this.rightIndex == this.leftIndex) {
+
+                    } else {
+                        recursiveFind(expectWeight + allGoods[this.rightIndex], allGoods, this.lastIndex);
+                    }
+                }
                 // 目前数组等待的位置不是末尾 那么需要从当前的下一个进行找起
                 // 数组等待的位置需要前移一位
-                if(findIndex != this.allGoods.length - 1) {
+                if(firstFind != this.allGoods.length - 1) {
                     if(CollUtil.isNotEmpty(this.tempGoodList)) {
                         // 需要先移除最后一个元素的数组
                         this.tempGoodList.remove(this.tempGoodList.size() - 1);
@@ -106,6 +144,7 @@ public class PackApp {
                     recursiveFind(this.expectWeight, allGoods, ++this.firstFind);
                 }
             } else {
+                this.rightIndex = fistIndex;
                 // 每次获取数组剩余的元素中的指定位置元素的值
                 int first = allGoods[fistIndex];
                 // 如果期望值比这个元素大 那么需要进行递归的查找
@@ -113,12 +152,15 @@ public class PackApp {
                     log.info("Find: {}, {} It is small than {}!", tempGoodList, first, expectWeight);
                     // 如果当前数据为空 表明从开始进行的查找
                     if(CollUtil.isEmpty(this.tempGoodList)) {
-                        this.firstFind = fistIndex;
+                        // 如果已经找到的元素的长度为空
+                        this.leftIndex = fistIndex;
                     }
                     tempGoodList.add(first);
-                    findIndex = fistIndex;
-                    recursiveFind(expectWeight - first, allGoods, fistIndex + 1);
+                    this.lastIndex = fistIndex;
+                    // 记录之前找到的前一个结点
+                    this.previousLastIndex = this.lastIndex - 1;
                     this.findCount++;
+                    recursiveFind(expectWeight - first, allGoods, fistIndex + 1);
                 } else if(expectWeight == first) {
                     // 如果期望值正好等于指定位置元素的值
                     // 那么此时已经找到了符合条件的组合
@@ -136,12 +178,14 @@ public class PackApp {
                     log.info("Find: {}, {} It is perfect!", tempGoodList, first);
                     // 换完就需要return了 方便进入下面的循环
                     this.findCount++;
+                    // 直接把最后的一个元素进行移除
+                    this.tempGoodList.remove(this.tempGoodList.size() - 1);
                     recursiveFind(expectWeight, allGoods, fistIndex + 1);
                 } else {
                     // 如果大于 那么需要摒弃当前的元素 直接找下一个元素
                     log.info("Find: {}, {} It is bigger than {}!", tempGoodList, first, expectWeight);
-                    recursiveFind(expectWeight, allGoods, fistIndex + 1);
                     this.findCount++;
+                    recursiveFind(expectWeight, allGoods, fistIndex + 1);
                 }
             }
         }
