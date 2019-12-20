@@ -11,6 +11,14 @@ import java.util.List;
  */
 public class Ch06RecursiveTest {
 
+    @Test
+    public void testChoose() {
+        String[] arr = {"A", "B", "C", "D", "E"};
+        int combineSize = 3;
+        ChooseApp chooseApp = new ChooseApp(arr, combineSize);
+        chooseApp.listAll();
+    }
+
     /**
      * 测试背包问题
      */
