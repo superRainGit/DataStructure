@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author zhangcy
  */
 @Slf4j
-public class ShellSort<T extends Comparable<T>> {
+public class ShellSortApp<T extends Comparable<T>> {
 
     /**
      * 可以参与比较的数组
@@ -38,7 +38,7 @@ public class ShellSort<T extends Comparable<T>> {
     /**
      * 构造器
      */
-    public ShellSort(int maxSize) {
+    public ShellSortApp(int maxSize) {
         this.arr = new Comparable[maxSize];
         this.maxSize = maxSize;
         this.size = 0;
