@@ -61,18 +61,22 @@ public class PartitionApp<T extends Comparable<T>> {
         // 当左右扫描遇到的时候就是结束的时候
         while(true) {
             // 先从左找第一个大于splitLine的
-            while(leftScan < size && arr[leftScan++].compareTo(splitLine) < 0) {
+            while(leftScan < size && arr[leftScan].compareTo(splitLine) < 0) {
+                leftScan++;
             }
             // 再从右找第一个小于splitLine的
-            while(rightScan > -1 && arr[rightScan--].compareTo(splitLine) > 0) {
+            while(rightScan > -1 && arr[rightScan].compareTo(splitLine) > 0) {
+                rightScan--;
             }
-            if(rightScan < leftScan) {
+            if(rightScan <= leftScan) {
                 break;
             }
             // 交换两个元素的位置
-            Comparable temp = arr[leftScan - 1];
-            arr[leftScan - 1] = arr[rightScan + 1];
-            arr[rightScan + 1] = temp;
+            Comparable temp = arr[leftScan];
+            arr[leftScan] = arr[rightScan];
+            arr[rightScan] = temp;
+            leftScan++;
+            rightScan--;
         }
     }
 }
