@@ -1,6 +1,7 @@
 package com.zhangcy.data;
 
 import com.zhangcy.java.data.structure.ch07.PartitionApp;
+import com.zhangcy.java.data.structure.ch07.QuickSortApp;
 import com.zhangcy.java.data.structure.ch07.ShellSortApp;
 import org.junit.Test;
 
@@ -8,6 +9,25 @@ import org.junit.Test;
  * 高级排序
  */
 public class Ch07AdvancedSortTest {
+
+    @Test
+    public void testQuickSort() {
+        int maxSize = 20;
+        QuickSortApp<Integer> quickSortApp = new QuickSortApp<>(maxSize);
+        // 42, 93, 6, 53, 57
+        // 54, 42, 71, 75, 79
+        for(int i = 0; i < 5; i++) {
+            quickSortApp.insert((int)(Math.random() * 100));
+        }
+//        quickSortApp.insert(54);
+//        quickSortApp.insert(42);
+//        quickSortApp.insert(71);
+//        quickSortApp.insert(75);
+//        quickSortApp.insert(79);
+        quickSortApp.display();
+        quickSortApp.quickSort();
+        quickSortApp.display();
+    }
 
     /**
      * 测试分组
@@ -18,11 +38,13 @@ public class Ch07AdvancedSortTest {
         PartitionApp<Integer> partitionApp = new PartitionApp<>(maxSize);
         partitionApp.insert(49);
         partitionApp.insert(39);
+        partitionApp.insert(40);
+        partitionApp.insert(40);
         partitionApp.insert(11);
         partitionApp.insert(67);
         partitionApp.insert(96);
         partitionApp.display();
-        int partLine = 100;
+        int partLine = 40;
         System.out.println("split Line " + partLine);
         partitionApp.partitionIt(partLine);
         partitionApp.display();
