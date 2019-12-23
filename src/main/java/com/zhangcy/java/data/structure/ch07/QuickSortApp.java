@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Arrays;
 
 /**
- * 快速排序算法实现
+ * 快速排序算法实现[最简单的版本]
  * @author zhangcy
  */
 @Slf4j
