@@ -1,9 +1,6 @@
 package com.zhangcy.data;
 
-import com.zhangcy.java.data.structure.ch07.PartitionApp;
-import com.zhangcy.java.data.structure.ch07.QuickSortApp;
-import com.zhangcy.java.data.structure.ch07.QuickSortApp2;
-import com.zhangcy.java.data.structure.ch07.ShellSortApp;
+import com.zhangcy.java.data.structure.ch07.*;
 import org.junit.Test;
 
 /**
@@ -12,15 +9,44 @@ import org.junit.Test;
 public class Ch07AdvancedSortTest {
 
     /**
+     * 测试快速排序 走的判断逻辑是三者之中取适合的中枢元素
+     */
+    @Test
+    public void testQuickSort3() {
+        int maxSize = 20;
+        QuickSortApp3<Integer> quickSortApp3 = new QuickSortApp3<>(maxSize);
+        for(int i = 0; i < maxSize; i++) {
+            quickSortApp3.insert((int)(Math.random() * 100));
+        }
+//        quickSortApp3.insert(36);
+//        quickSortApp3.insert(42);
+//        quickSortApp3.insert(42);
+//        quickSortApp3.insert(54);
+//        quickSortApp3.insert(71);
+//        quickSortApp3.insert(75);
+//        quickSortApp3.insert(79);
+        quickSortApp3.display();
+        quickSortApp3.quickSort();
+        quickSortApp3.display();
+    }
+
+    /**
      * 测试去掉右侧边界检查的快速排序
      */
     @Test
     public void testQuickSort2() {
         int maxSize = 20;
         QuickSortApp2<Integer> quickSortApp2 = new QuickSortApp2<>(maxSize);
-        for(int i = 0; i < 5; i++) {
-            quickSortApp2.insert((int)(Math.random() * 100));
-        }
+//        for(int i = 0; i < 5; i++) {
+//            quickSortApp2.insert((int)(Math.random() * 100));
+//        }
+        quickSortApp2.insert(36);
+        quickSortApp2.insert(42);
+        quickSortApp2.insert(42);
+        quickSortApp2.insert(54);
+        quickSortApp2.insert(71);
+        quickSortApp2.insert(75);
+        quickSortApp2.insert(79);
         quickSortApp2.display();
         quickSortApp2.quickSort();
         quickSortApp2.display();
