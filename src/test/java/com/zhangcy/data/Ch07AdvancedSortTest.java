@@ -2,6 +2,7 @@ package com.zhangcy.data;
 
 import com.zhangcy.java.data.structure.ch07.PartitionApp;
 import com.zhangcy.java.data.structure.ch07.QuickSortApp;
+import com.zhangcy.java.data.structure.ch07.QuickSortApp2;
 import com.zhangcy.java.data.structure.ch07.ShellSortApp;
 import org.junit.Test;
 
@@ -10,6 +11,24 @@ import org.junit.Test;
  */
 public class Ch07AdvancedSortTest {
 
+    /**
+     * 测试去掉右侧边界检查的快速排序
+     */
+    @Test
+    public void testQuickSort2() {
+        int maxSize = 20;
+        QuickSortApp2<Integer> quickSortApp2 = new QuickSortApp2<>(maxSize);
+        for(int i = 0; i < 5; i++) {
+            quickSortApp2.insert((int)(Math.random() * 100));
+        }
+        quickSortApp2.display();
+        quickSortApp2.quickSort();
+        quickSortApp2.display();
+    }
+
+    /**
+     * 测试简单版的快速排序
+     */
     @Test
     public void testQuickSort() {
         int maxSize = 20;
