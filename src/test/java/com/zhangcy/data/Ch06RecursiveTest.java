@@ -4,11 +4,53 @@ import com.zhangcy.java.data.structure.ch06.*;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 测试第六章递归
  */
 public class Ch06RecursiveTest {
+
+    @Test
+    public void testChoose() {
+        String[] arr = {"A", "B", "C", "D", "E"};
+        int combineSize = 3;
+        ChooseApp chooseApp = new ChooseApp(arr, combineSize);
+        chooseApp.listAll();
+    }
+
+    /**
+     * 测试背包问题
+     */
+    @Test
+    public void testPack() {
+        int expectWeight = 100;
+        List<Integer> arr = Arrays.asList(11, 8, 7, 6, 5, 9);
+        PackApp packApp = new PackApp(expectWeight, arr);
+        packApp.find();
+        packApp.display();
+    }
+
+    /**
+     * 测试递归的计算X的Y次幂的结果
+     */
+    @Test
+    public void testPower() {
+        int base = 2;
+        int power = 9;
+        PowerApp powerApp = new PowerApp(base, power);
+        powerApp.power();
+    }
+
+    /**
+     * 测试使用栈的方式代替实现递归
+     */
+    @Test
+    public void testStackRecursive() {
+        int num = 5;
+        StackTriangleApp app = new StackTriangleApp(num);
+        System.out.println(app.recTriangle());
+    }
 
     /**
      * 测试归并排序
@@ -30,6 +72,7 @@ public class Ch06RecursiveTest {
         mergeApp.insert(55);
         mergeApp.insert(62);
         mergeApp.insert(74);
+        mergeApp.display();
         mergeApp.mergeSort();
         mergeApp.display();
     }
