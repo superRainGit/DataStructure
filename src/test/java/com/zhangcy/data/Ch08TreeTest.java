@@ -20,6 +20,18 @@ public class Ch08TreeTest {
         tree.insert(22);
         tree.insert(16);
         tree.find(22);
+        // 测试树的中序遍历
+        System.out.println("中序遍历");
         tree.inOrder();
+        // 测试树的先序遍历
+        System.out.println("先序遍历");
+        tree.preOrder();
+        // 测试树的后序遍历
+        System.out.println("后序遍历");
+        tree.postOrder();
+        // 当前树的最小值
+        System.out.println(tree.min());
+        // 当前树的最大值
+        System.out.println(tree.max());
     }
 }

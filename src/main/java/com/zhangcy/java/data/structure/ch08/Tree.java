@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 树本身的实例[目前在写的是一个二叉搜索树]
+ * 在二插搜索树中找树的最小值和最大值是最简单的
+ * 找最小值就是从根一直向左遍历，找到找到一个左节点为空的节点
+ * 找最大值就是从根一直向右遍历，找到找到一个右节点为空的节点
  * @author zhangcy
  */
 @Slf4j
@@ -106,6 +109,84 @@ public class Tree<T extends Comparable<T>> {
             currNode.display();
             // 再遍历当前节点的右子树
             recursiveInOrder(currNode.getRightChild());
+        }
+    }
+
+    /**
+     * 树的先序遍历
+     * 先访问根节点数据
+     * 访问左子树
+     * 访问右子树
+     */
+    public void preOrder() {
+        recursivePreOrder(this.root);
+    }
+
+    /**
+     * 递归的进行树的先序遍历
+     */
+    private void recursivePreOrder(TreeNode<T> currNode) {
+        if(ObjectUtil.isNotNull(currNode)) {
+            // 访问当前节点
+            currNode.display();
+            // 递归访问树的左子树
+            recursivePreOrder(currNode.getLeftChild());
+            // 递归的访问树的右子树
+            recursivePreOrder(currNode.getRightChild());
+        }
+    }
+
+    /**
+     * 树的后序遍历
+     * 先访问左子树
+     * 再访问右子树
+     * 最后访问节点自身
+     */
+    public void postOrder() {
+        recursivePostOrder(this.root);
+    }
+
+    /**
+     * 递归的进行树的后序遍历
+     */
+    private void recursivePostOrder(TreeNode<T> currNode) {
+        if(ObjectUtil.isNotNull(currNode)) {
+            // 先访问左子树
+            recursivePostOrder(currNode.getLeftChild());
+            // 后访问左子树
+            recursivePostOrder(currNode.getRightChild());
+            // 最后访问节点本身
+            currNode.display();
+        }
+    }
+
+    /**
+     * 找到树中最小的元素
+     */
+    public T min() {
+        TreeNode<T> currNode = this.root;
+        while(ObjectUtil.isNotNull(currNode) && ObjectUtil.isNotNull(currNode.getLeftChild())) {
+            currNode = currNode.getLeftChild();
+        }
+        if(ObjectUtil.isNotNull(currNode)) {
+            return currNode.getData();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 找到树中最大的元素
+     */
+    public T max() {
+        TreeNode<T> currNode = this.root;
+        while(ObjectUtil.isNotNull(currNode) && ObjectUtil.isNotNull(currNode.getRightChild())) {
+            currNode = currNode.getRightChild();
+        }
+        if(ObjectUtil.isNotNull(currNode)) {
+            return currNode.getData();
+        } else {
+            return null;
         }
     }
 
