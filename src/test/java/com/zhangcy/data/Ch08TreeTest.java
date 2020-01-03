@@ -33,5 +33,8 @@ public class Ch08TreeTest {
         System.out.println(tree.min());
         // 当前树的最大值
         System.out.println(tree.max());
+        // 删除叶子节点元素
+        tree.delete(17);
+        tree.inOrder();
     }
 }

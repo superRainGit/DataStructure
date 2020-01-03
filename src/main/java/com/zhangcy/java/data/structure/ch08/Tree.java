@@ -192,8 +192,101 @@ public class Tree<T extends Comparable<T>> {
 
     /**
      * 删除指定的元素的节点
+     * 删除指定key的节点
+     * 1、指定节点没有任何的子元素[只需要将父元素的左节点或者右节点置为null]
      */
     public void delete(T key) {
+        // 先找要删除的节点的位置
+        TreeNode<T> currNode = this.root;
+        TreeNode<T> parentNode = null;
+        while(ObjectUtil.isNotNull(currNode) && !currNode.isLeaf()) {
+            if(currNode.getData().compareTo(key) > 0) {
+                parentNode = currNode;
+                currNode = currNode.getLeftChild();
+            } else if(currNode.getData().compareTo(key) < 0) {
+                parentNode = currNode;
+                currNode = currNode.getRightChild();
+            } else {
+                // 已经找到数据了
+                break;
+            }
+        }
+        if(ObjectUtil.isNotNull(parentNode)) {
+            // 如果当前节点是一个叶子节点 那么表明找到最后也没有找到
+            if(parentNode.isLeaf()) {
+                log.error("can not find ele: {}", key);
+            } else {
+                // 已经找到了
+                // 有三种情况
+                if(currNode.isLeaf()) {
+                    // 1 如果找到的节点是一个叶子节点
+                    deleteNoChild(parentNode, currNode);
+                } else {
+                    // 如果找到的节点自己有一个孩子节点的
+                    if(currNode.onlyOneChild()) {
+                        // 如果只有一个孩子节点[左节点或者右节点]
+                        // 直接吧找到的孩子节点放到父节点的下面
+                        deleteOneChild(parentNode, currNode);
+                    } else {
+                        // 两个节点都有
+                    }
+                }
+            }
+        } else {
+            // 线索二叉树的没有任何数据
+            log.error("empty tree");
+        }
+    }
 
+    /**
+     * 找到的节点是叶子节点
+     * 那么需要替换的就只有父节点
+     * 还需要找到是要消除父节点的左节点还是右节点
+     */
+    private void deleteNoChild(TreeNode<T> parentNode, TreeNode<T> findNode) {
+        // 如果不为空 那么表明不是根节点
+        if(ObjectUtil.isNotNull(parentNode)) {
+            if(parentNode.getLeftChild() == findNode) {
+                parentNode.setLeftChild(null);
+            } else {
+                parentNode.setRightChild(null);
+            }
+        } else {
+            // 如果这个叶子节点同时也是根节点
+            this.root = null;
+        }
+    }
+
+    /**
+     * 当前节点目前只有一个元素
+     * 需要将当前元素的子树放到父节点的对应位置
+     */
+    private void deleteOneChild(TreeNode<T> parentNode, TreeNode<T> findNode) {
+        // 如果父节点不为空 那么表明不是根节点
+        if(ObjectUtil.isNotNull(parentNode)) {
+            if(ObjectUtil.isNotNull(findNode.getLeftChild())) {
+                // 如果左节点不为空
+                if(parentNode.getLeftChild() == findNode) {
+                    parentNode.setLeftChild(findNode.getLeftChild());
+                } else {
+                    parentNode.setRightChild(findNode.getLeftChild());
+                }
+            } else {
+                // 如果右节点不为空
+                if(parentNode.getLeftChild() == findNode) {
+                    parentNode.setLeftChild(findNode.getLeftChild());
+                } else {
+                    parentNode.setRightChild(findNode.getLeftChild());
+                }
+            }
+        } else {
+            if(ObjectUtil.isNotNull(findNode.getLeftChild())) {
+                // 如果左节点不为空
+                this.root = findNode.getLeftChild();
+            } else {
+                // 如果右节点不为空
+                this.root = findNode.getRightChild();
+            }
+        }
     }
 }
