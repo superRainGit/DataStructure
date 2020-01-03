@@ -58,4 +58,18 @@ public class TreeNode<T extends Comparable<T>> {
     public boolean isLeaf() {
         return ObjectUtil.isNull(this.leftChild) && ObjectUtil.isNull(this.rightChild);
     }
+
+    /**
+     * 拥有两个孩子节点
+     */
+    public boolean allChild() {
+        return ObjectUtil.isNotNull(this.rightChild) && ObjectUtil.isNotNull(this.leftChild);
+    }
+
+    /**
+     * 判断是否只有一个孩子节点
+     */
+    public boolean onlyOneChild() {
+        return !allChild() && !isLeaf();
+    }
 }
