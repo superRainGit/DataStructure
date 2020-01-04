@@ -62,6 +62,7 @@ public class Tree<T extends Comparable<T>> {
                 // 要插入的元素比较小
                 parentNode = currNode;
                 currNode = currNode.getLeftChild();
+                lr = 0;
             } else {
                 // 要插入的元素比较大
                 parentNode = currNode;
@@ -199,7 +200,7 @@ public class Tree<T extends Comparable<T>> {
         // 先找要删除的节点的位置
         TreeNode<T> currNode = this.root;
         TreeNode<T> parentNode = null;
-        while(ObjectUtil.isNotNull(currNode) && !currNode.isLeaf()) {
+        while(ObjectUtil.isNotNull(currNode)) {
             if(currNode.getData().compareTo(key) > 0) {
                 parentNode = currNode;
                 currNode = currNode.getLeftChild();
@@ -211,30 +212,33 @@ public class Tree<T extends Comparable<T>> {
                 break;
             }
         }
-        if(ObjectUtil.isNotNull(parentNode)) {
-            // 如果当前节点是一个叶子节点 那么表明找到最后也没有找到
-            if(parentNode.isLeaf()) {
-                log.error("can not find ele: {}", key);
+        // 如果当前节点是一个叶子节点 那么表明找到最后也没有找到
+        if(ObjectUtil.isNotNull(parentNode) && parentNode.isLeaf()) {
+            log.error("can not find ele: {}", key);
+        } else {
+            // 已经找到了
+            // 有三种情况
+            if(currNode.isLeaf()) {
+                // 1 如果找到的节点是一个叶子节点
+                deleteNoChild(parentNode, currNode);
             } else {
-                // 已经找到了
-                // 有三种情况
-                if(currNode.isLeaf()) {
-                    // 1 如果找到的节点是一个叶子节点
-                    deleteNoChild(parentNode, currNode);
+                // 如果找到的节点自己有一个孩子节点的
+                if(currNode.onlyOneChild()) {
+                    // 如果只有一个孩子节点[左节点或者右节点]
+                    // 直接吧找到的孩子节点放到父节点的下面
+                    deleteOneChild(parentNode, currNode);
                 } else {
-                    // 如果找到的节点自己有一个孩子节点的
-                    if(currNode.onlyOneChild()) {
-                        // 如果只有一个孩子节点[左节点或者右节点]
-                        // 直接吧找到的孩子节点放到父节点的下面
-                        deleteOneChild(parentNode, currNode);
+                    // 左右两个孩子节点都有
+                    // 先找到要删除的节点的中序后继元素
+                    TreeNode<T> successor = getSuccessor(currNode);
+                    // 判断获取到的中序后继节点 如果是要删除的右节点 那么直接将该右节点的进行移动
+                    if(currNode.getRightChild() == successor) {
+                        successorIsRight(parentNode, currNode, successor);
                     } else {
-                        // 两个节点都有
+                        successorIsNotRight(parentNode, currNode, successor);
                     }
                 }
             }
-        } else {
-            // 线索二叉树的没有任何数据
-            log.error("empty tree");
         }
     }
 
@@ -287,6 +291,85 @@ public class Tree<T extends Comparable<T>> {
                 // 如果右节点不为空
                 this.root = findNode.getRightChild();
             }
+        }
+    }
+
+    /**
+     * 获取当前节点的中序后继元素
+     * 如何查找当前节点的中序后继元素?
+     * 因为中序遍历整棵树的结果就是当前线索二叉树的有序排列
+     * 所以要找元素的中序后继元素
+     * 直接看当前节点的右节点
+     * 1 有左节点 那么递归的进行最左边元素的查找 直到找到最左边的元素
+     * 2 没有左节点 那么就直接是当前要删除的元素的右节点
+     * @param currNode 当前节点元素
+     */
+    private TreeNode<T> getSuccessor(TreeNode<T> currNode) {
+        // 要删除的节点的右节点
+        TreeNode<T> rightNode = currNode.getRightChild();
+        // 要删除的右节点的左节点
+        TreeNode<T> leftNode = rightNode.getLeftChild();
+        if(ObjectUtil.isNotNull(leftNode)) {
+            TreeNode<T> parentNode = rightNode;
+            // 如果有左节点 需要递归的找到第一个没有左节点节点
+            while(ObjectUtil.isNotNull(leftNode.getLeftChild())) {
+                parentNode = leftNode;
+                leftNode = leftNode.getLeftChild();
+            }
+            // 直接在遍历的结果上直接修改
+            parentNode.setLeftChild(leftNode.getRightChild());
+            return leftNode;
+        } else {
+            // 如果没有左节点 那么就是当前要删除节点的右节点
+            return rightNode;
+        }
+    }
+
+    /**
+     * 如果中序的后继节点就是要删除节点的右节点
+     * 那么需要修改当前删除元素的父节点的左右指针
+     * 中序后继的左子树为删除节点的左子树
+     * @param parentNode 当前要删除节点的父节点
+     * @param currNode 要删除的节点
+     * @param successor 中序后继节点
+     */
+    private void successorIsRight(TreeNode<T> parentNode, TreeNode<T> currNode, TreeNode<T> successor) {
+        // 如果跟节点为空 那么表明找到的是一个根节点进行的删除
+        if(ObjectUtil.isNotNull(parentNode)) {
+            if(parentNode.getRightChild() == currNode) {
+                parentNode.setRightChild(successor);
+            } else {
+                parentNode.setLeftChild(successor);
+            }
+        } else {
+            this.root = successor;
+        }
+        successor.setLeftChild(currNode.getLeftChild());
+    }
+
+    /**
+     * 如果中序后继节点并不是删除节点的右结点
+     * 那么就是一个右结点的子孙结点 那么需要对该中序后继节点的右子树进行迁移
+     * 为什么只迁移右子树呢? 因为一个节点的中序后继节点肯定是不能有左子树的
+     * 但凡有 中序后继结点肯定就是左子树
+     * 所以需要做的事情如下
+     * 1 将中序后继元素的右子树绑定到当前中序后继节点的左子树上[该步骤已经在找到中序后继元素时修改了]
+     * 2 将中序后继元素的右子树指向删除节点的右子树
+     * 3 将中序后继元素的左子树指定删除节点的左子树
+     * 4 将删除元素的父节点的左右子树赋值中序后继元素
+     */
+    private void successorIsNotRight(TreeNode<T> parentNode, TreeNode<T> currNode, TreeNode<T> successor) {
+        successor.setLeftChild(currNode.getLeftChild());
+        successor.setRightChild(currNode.getRightChild());
+        // 如果父节点不为空 那么不是删除的根节点
+        if(ObjectUtil.isNotNull(parentNode)) {
+            if(parentNode.getRightChild() == currNode) {
+                parentNode.setRightChild(successor);
+            } else {
+                parentNode.setLeftChild(successor);
+            }
+        } else {
+            this.root = successor;
         }
     }
 }
