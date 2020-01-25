@@ -50,8 +50,14 @@ public class RbTree<T extends Comparable<T>> {
         } else {
             // 当前正在遍历的节点
             RbNode<T> currentNode = this.root;
-            // 默认往右节点插入数据
-            int lr = 0;
+            // 父节点
+            RbNode<T> parentNode = null;
+            // 祖父节点
+            RbNode<T> grandParent = null;
+            // 当前节点[要插入的节点]和父节点关系
+            int lrCp = -1;
+            // 父节点和祖父节点的关系
+            int lrPg = -1;
             while(true) {
                 // 先查询当前节点是否是黑色节点 如果是再判断是不是有两个红色节点
                 if(currentNode.isBlack() && currentNode.isPrefect()) {
@@ -59,170 +65,121 @@ public class RbTree<T extends Comparable<T>> {
                     if(currentNode.getLeftChild().isRed()) {
                         currentNode.getLeftChild().setRbEnum(RbEnum.BLACK);
                         currentNode.getRightChild().setRbEnum(RbEnum.BLACK);
-                        // 需要判断当前节点是不是根节点 如果是根节点 那么根节点需要变成黑色
-                        if(this.root != currentNode) {
-                            currentNode.setRbEnum(RbEnum.RED);
-                            // 需要判断当前节点的父节点是不是和当前节点的颜色冲突 即将当前节点变为红色之后是否出现了红-红双节点
-                            RbNode<T> parentNode = currentNode.getParentNode();
-                            if(parentNode.isRed()) {
-                                // 如果出现了红-红双节点 那么就需要进行旋转
-                                // 如何进行旋转? 如果是外联节点 需要进行一次旋转
-                                // 如果是内联节点 需要进行两次旋转
-                                // 如果是外联节点
-                                if(((parentNode.getLeftChild() == currentNode) && parentNode.getParentNode().getLeftChild() == parentNode)
-                                        || ((parentNode.getRightChild() == currentNode) && (parentNode.getParentNode().getRightChild() == parentNode))) {
-                                    // 需要先进行变色
-                                    // 先变祖父节点的颜色
-                                    parentNode.getParentNode().setRbEnum(RbEnum.RED);
-                                    parentNode.setRbEnum(RbEnum.BLACK);
-                                } else {
-
-                                }
-                            }
-                        }
+//                        // 需要判断当前节点是不是根节点 如果是根节点 那么根节点需要变成黑色
+//                        if(this.root != currentNode) {
+//                            currentNode.setRbEnum(RbEnum.RED);
+//                            // 需要判断当前节点的父节点是不是和当前节点的颜色冲突 即将当前节点变为红色之后是否出现了红-红双节点
+//                            RbNode<T> parentNode = currentNode.getParentNode();
+//                            if(parentNode.isRed()) {
+//                                // 如果出现了红-红双节点 那么就需要进行旋转
+//                                // 如何进行旋转? 如果是外联节点 需要进行一次旋转
+//                                // 如果是内联节点 需要进行两次旋转
+//                                // 如果是外联节点
+//                                if(((parentNode.getLeftChild() == currentNode) && parentNode.getParentNode().getLeftChild() == parentNode)
+//                                        || ((parentNode.getRightChild() == currentNode) && (parentNode.getParentNode().getRightChild() == parentNode))) {
+//                                    // 需要先进行变色
+//                                    // 先变祖父节点的颜色
+//                                    parentNode.getParentNode().setRbEnum(RbEnum.RED);
+//                                    parentNode.setRbEnum(RbEnum.BLACK);
+//                                } else {
+//
+//                                }
+//                            }
+//                        }
                     }
                 }
                 // 如果当前遍历的节点比要插入的节点大
-                if(currentNode.getData().compareTo(data) > 0) {
-                    lr = 1;
-                    if(ObjectUtil.isNotNull(currentNode.getLeftChild())) {
-                        currentNode = currentNode.getLeftChild();
+                // 不如反方向的比较好理解 因为那样顺着人的意思
+                // 即比较当前要插入的节点和之前的节点的对比
+                if(data.compareTo(currentNode.getData()) > 0) {
+                    // 如果当前节点有右子节点 那么往右
+                    if(ObjectUtil.isNotNull(currentNode.getRightChild())) {
+                        // 如果向右查找 那么表明父节点是祖父节点的右节点
+                        grandParent = currentNode;
+                        currentNode = currentNode.getRightChild();
+                        lrPg = 0;
                     } else {
+                        // 否则的话已经找到了结尾 应该在当前节点的右边插入当前元素
+                        lrCp = 0;
                         break;
                     }
-                } else if(currentNode.getData().compareTo(data) < 0) {
-                    lr = 0;
-                    if(ObjectUtil.isNotNull(currentNode.getRightChild())) {
-                        currentNode = currentNode.getRightChild();
+                } else if(data.compareTo(currentNode.getData()) < 0) {
+                    // 如果当前节点有左子节点 那么往左
+                    if(ObjectUtil.isNotNull(currentNode.getLeftChild())) {
+                        // 如果向左查找 那么表明父节点是祖父节点的左节点
+                        grandParent = currentNode;
+                        currentNode = currentNode.getLeftChild();
+                        lrPg = 1;
                     } else {
+                        // 否则的话已经找到了结尾 应该在当前节点的左边插入当前元素
+                        lrCp = 1;
                         break;
                     }
                 }
             }
+            parentNode = currentNode;
             // 当前节点就是最后找到的要插入的节点的位置
-            newNode.setParentNode(currentNode);
-            if(lr == 1) {
-                currentNode.setLeftChild(newNode);
+            newNode.setParentNode(parentNode);
+            if(lrCp == 1) {
+                parentNode.setLeftChild(newNode);
             } else {
-                currentNode.setRightChild(newNode);
+                parentNode.setRightChild(newNode);
             }
+            // 判断一下是否有违背红黑树的存在 如果有就需要做旋转
             // 判断一下父节点和子节点是否冲突
-            if(currentNode.isRed()) {
-                // 有冲突的话需要进行旋转
-                // 判断是内联节点还是外联节点
-                if(lr == 1 && currentNode.getParentNode().getLeftChild() == currentNode) {
-                    // 左外联节点 需要进行一次右旋转
-                    currentNode.setRbEnum(RbEnum.BLACK);
-                    // 获取父节点
-                    RbNode<T> parentNode = currentNode.getParentNode();
-                    // 取祖父节点
-                    RbNode<T> grandParent = parentNode.getParentNode();
-                    parentNode.setRbEnum(RbEnum.RED);
+            if(parentNode.isRed()) {
+                // 因为是直接在叶子节点完成的插入 那么就会有四种情况 俩种大情况
+                // 俩种大情况为内联节点或者外联节点
+                // 我们先优先处理内联节点变为外联节点 那么都变为外联节点的是就可以直接一起处理了
+                // 先处理内联节点
+                if((lrCp ^ lrPg) == 1) {
+                    // 需要进行右旋
+                    if(lrPg == 1) {
+                        grandParent.setLeftChild(newNode);
+                    } else {
+                        grandParent.setRightChild(newNode);
+                    }
+                    if(lrCp == 1) {
+                        newNode.setRightChild(parentNode);
+                    } else {
+                        newNode.setLeftChild(parentNode);
+                    }
+                    newNode.setParentNode(grandParent);
                     parentNode.setLeftChild(null);
                     parentNode.setRightChild(null);
-                    parentNode.setParentNode(currentNode);
-                    currentNode.setRightChild(parentNode);
-                    // 如果父节点是根节点
-                    if(this.root == parentNode) {
-                        // 那么进行右旋之后根节点就会发生变动
-                        currentNode.setParentNode(null);
-                        this.root = currentNode;
+                    parentNode.setParentNode(newNode);
+                    lrCp = lrCp ^ 1;
+                    newNode = parentNode;
+                    parentNode = newNode.getParentNode();
+                }
+                // 目前已经处理了所有的内联节点 现在全部的变成了外联节点
+                // 如何处理外联节点?
+                // 将父节点变为黑色 同时将祖父节点变为红色
+                parentNode.setRbEnum(RbEnum.BLACK);
+                grandParent.setRbEnum(RbEnum.RED);
+                RbNode<T> grandParentParent = grandParent.getParentNode();
+                grandParent.setLeftChild(null);
+                grandParent.setRightChild(null);
+                grandParent.setParentNode(parentNode);
+                if(lrCp == 1) {
+                    // 左内联节点
+                    parentNode.setRightChild(grandParent);
+                } else {
+                    parentNode.setLeftChild(grandParent);
+                }
+                // 处理祖父节点
+                if(ObjectUtil.isNotNull(grandParentParent)) {
+                    if(grandParentParent.getLeftChild() == grandParent) {
+                        // 左子树
+                        grandParentParent.setLeftChild(parentNode);
                     } else {
-                        // 如果不是 直接进行右旋 需要修改原祖父节点的子节点
-                        if(grandParent.getLeftChild() == parentNode) {
-                            grandParent.setLeftChild(currentNode);
-                        } else {
-                            grandParent.setRightChild(currentNode);
-                        }
-                    }
-                } else if(lr == 0 && currentNode.getParentNode().getRightChild() == currentNode) {
-                    // 右外联节点 需要进行一次左旋转
-                    currentNode.setRbEnum(RbEnum.BLACK);
-                    // 获取父节点
-                    RbNode<T> parentNode = currentNode.getParentNode();
-                    // 取祖父节点
-                    RbNode<T> grandParent = parentNode.getParentNode();
-                    parentNode.setRbEnum(RbEnum.RED);
-                    parentNode.setLeftChild(null);
-                    parentNode.setRightChild(null);
-                    parentNode.setParentNode(currentNode);
-                    currentNode.setLeftChild(parentNode);
-                    // 如果父节点是根节点
-                    if(this.root == parentNode) {
-                        // 那么进行左旋之后根节点就会发生变动
-                        currentNode.setParentNode(null);
-                        this.root = currentNode;
-                    } else {
-                        // 如果不是 直接进行左旋 需要修改原祖父节点的子节点
-                        if(grandParent.getLeftChild() == parentNode) {
-                            grandParent.setLeftChild(currentNode);
-                        } else {
-                            grandParent.setRightChild(currentNode);
-                        }
-                        currentNode.setParentNode(grandParent);
-                    }
-                } else if(lr == 1 && currentNode.getParentNode().getRightChild() == currentNode) {
-                    // 左内联节点 需要两次旋转
-                    // 1、先变色
-                    newNode.setRbEnum(RbEnum.BLACK);
-                    // 获取父亲节点和祖父节点
-                    RbNode<T> parent = currentNode.getParentNode();
-                    // 祖父节点
-                    RbNode<T> grandParent = parent.getParentNode();
-                    // 2、首先需要内节点右旋 然后整体左旋
-                    // 先右旋
-                    parent.setRbEnum(RbEnum.RED);
-                    newNode.setRightChild(currentNode);
-                    newNode.setLeftChild(parent);
-                    parent.setParentNode(newNode);
-                    parent.setLeftChild(null);
-                    parent.setRightChild(null);
-                    currentNode.setLeftChild(null);
-                    currentNode.setRightChild(null);
-                    currentNode.setParentNode(newNode);
-                    // 然后整体左旋
-                    // 如果是根节点
-                    if(parent == this.root) {
-                        this.root = newNode;
-                        newNode.setParentNode(null);
-                    } else {
-                        newNode.setParentNode(grandParent);
-                        if(grandParent.getLeftChild() == parent) {
-                            grandParent.setLeftChild(newNode);
-                        } else {
-                            grandParent.setRightChild(newNode);
-                        }
+                        // 右子树
+                        grandParentParent.setRightChild(parentNode);
                     }
                 } else {
-                    // 右内联节点 需要两次旋转
-                    // 1、先变色
-                    newNode.setRbEnum(RbEnum.BLACK);
-                    // 2、先节点右旋 再整棵树左旋
-                    // 取父亲节点和祖父节点
-                    RbNode<T> parent = currentNode.getParentNode();
-                    parent.setRbEnum(RbEnum.RED);
-                    RbNode<T> grandParent = parent.getParentNode();
-                    // 先右旋
-                    currentNode.setLeftChild(null);
-                    currentNode.setRightChild(null);
-                    currentNode.setParentNode(newNode);
-                    newNode.setLeftChild(currentNode);
-                    newNode.setRightChild(parent);
-                    parent.setParentNode(newNode);
-                    parent.setLeftChild(null);
-                    parent.setRightChild(null);
-                    // 再整体左旋
-                    if(this.root == parent) {
-                        newNode.setParentNode(null);
-                        this.root = newNode;
-                    } else {
-                        if(grandParent.getLeftChild() == parent) {
-                            grandParent.setLeftChild(newNode);
-                        } else {
-                            grandParent.setRightChild(newNode);
-                        }
-                        newNode.setParentNode(grandParent);
-                    }
+                    // 如果为空 那么就是根节点
+                    this.root = parentNode;
+                    parentNode.setParentNode(null);
                 }
             }
         }
