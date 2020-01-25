@@ -12,12 +12,13 @@ public class Ch09RbTreeTest {
     public void testRbTree() {
         RbTree<Integer> rbTree = new RbTree<>();
         rbTree.insert(50);
-        rbTree.insert(25);
+//        rbTree.insert(25);
         rbTree.insert(75);
-        rbTree.insert(12);
-        rbTree.insert(20);
-        rbTree.insert(90);
-        rbTree.insert(85);
+//        rbTree.insert(12);
+//        rbTree.insert(6);
+//        rbTree.insert(30);
+//        rbTree.insert(90);
+        rbTree.insert(70);
         rbTree.display();
     }
 }
