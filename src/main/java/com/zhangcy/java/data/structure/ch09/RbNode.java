@@ -26,6 +26,11 @@ public class RbNode<T extends Comparable<T>> {
     private RbEnum rbEnum;
 
     /**
+     * 当前节点是父节点的什么节点
+     */
+    private LrEnum lrEnum;
+
+    /**
      * 左子节点
      */
     private RbNode<T> leftChild;
@@ -70,9 +75,11 @@ public class RbNode<T extends Comparable<T>> {
         return "RbNode{" +
                 "data=" + data +
                 ", rbEnum=" + rbEnum +
-                ", leftChild=" + ObjectUtil.isNotNull(this.getLeftChild()) +
+                ", lrEnum=" + lrEnum +
+                ", hasLeftChild=" + ObjectUtil.isNotNull(this.getLeftChild()) +
                 ", hasRightChild=" + ObjectUtil.isNotNull(this.getRightChild()) +
                 ", hasParentNode=" + ObjectUtil.isNotNull(this.getParentNode()) +
+                " and parentNode is " + (ObjectUtil.isNotNull(this.getParentNode()) ? this.getParentNode().getData() : "null") +
                 '}';
     }
 }
