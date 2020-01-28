@@ -70,10 +70,75 @@ public class RbTree<T extends Comparable<T>> {
                                 // 下面仅处理外联节点即可
                                 if((currentNode.lrEnum.ordinal() ^ currentNode.parentNode.lrEnum.ordinal()) == 1) {
                                     // 当知道异或的结果的时候 只要判断一边就可以
+                                    // 不同于叶子节点的红-红冲突 在树内部因为变色造成的红-红冲突会出现子树的平移
+                                    RbNode<T> parent = currentNode.parentNode;
+                                    RbNode<T> grandParent = parent.parentNode;
                                     if(currentNode.isLeft()) {
-
+                                        // 如果是左内联子树 那么需要进行树的右旋
+                                        // 当前节点的右节点进行水平右移
+                                        parent.leftChild = currentNode.rightChild;
+                                        currentNode.rightChild.parentNode = parent;
+                                        grandParent.rightChild = currentNode;
+                                        currentNode.rightChild = parent;
+                                        currentNode.lrEnum = LrEnum.RIGHT;
+                                        parent.leftChild.lrEnum = LrEnum.LEFT;
+                                    } else {
+                                        // 如果是右内联子树 那么需要进行树的左旋
+                                        // 当前节点的左节点进行水平左移
+                                        parent.rightChild = currentNode.leftChild;
+                                        currentNode.leftChild.parentNode = parent;
+                                        grandParent.leftChild = currentNode;
+                                        currentNode.leftChild = parent;
+                                        currentNode.lrEnum = LrEnum.LEFT;
+                                        parent.rightChild.lrEnum = LrEnum.RIGHT;
                                     }
+                                    parent.parentNode = currentNode;
+                                    currentNode.parentNode = grandParent;
+                                    // 做完旋转之后 进行当前、父、祖父节点的调整
+                                    currentNode = parent;
                                 }
+                                // 经过上述处理之后 只剩下了两种不同的外联节点
+                                // 先处理完成  处理完成之后 因为树的结构有可能因为旋转发生了根本性的改变
+                                // 父节点
+                                RbNode<T> parent = currentNode.parentNode;
+                                // 祖父节点
+                                RbNode<T> grandParent = parent.parentNode;
+                                // 祖父节点的父节点
+                                RbNode<T> grandParentParent = grandParent.parentNode;
+                                // 左向外联链接
+                                if(currentNode.isLeft()) {
+                                    grandParent.leftChild = parent.rightChild;
+                                    grandParent.leftChild.parentNode = grandParent;
+                                    parent.rightChild = grandParent;
+                                    grandParent.lrEnum = LrEnum.RIGHT;
+                                } else {
+                                    grandParent.rightChild = parent.leftChild;
+                                    grandParent.rightChild.parentNode = grandParent;
+                                    parent.leftChild = grandParent;
+                                    grandParent.lrEnum = LrEnum.LEFT;
+                                }
+                                grandParent.parentNode = parent;
+                                // 父节点要变成黑色
+                                parent.rbEnum = RbEnum.BLACK;
+                                // 祖父节点变红
+                                grandParent.rbEnum = RbEnum.RED;
+                                // 最后处理祖父节点的父节点
+                                if(ObjectUtil.isNotNull(grandParentParent)) {
+                                    if(grandParentParent.leftChild == grandParent) {
+                                        grandParentParent.leftChild = parent;
+                                        parent.lrEnum = LrEnum.LEFT;
+                                    } else {
+                                        grandParentParent.rightChild = parent;
+                                        parent.lrEnum = LrEnum.RIGHT;
+                                    }
+                                } else {
+                                   this.root = parent;
+                                   parent.lrEnum = null;
+                                }
+                                parent.parentNode = grandParentParent;
+                                // 直接从目前发现的父亲节点进行继续的查找
+                                currentNode = parent;
+                                continue;
                             }
                         }
                     }
@@ -172,7 +237,7 @@ public class RbTree<T extends Comparable<T>> {
                 } else {
                     // 如果为空 那么就是根节点
                     this.root = currentNode;
-                    currentNode.setLrEnum(null);
+                    currentNode.lrEnum = null;
                 }
                 currentNode.parentNode = grandParent;
             }
