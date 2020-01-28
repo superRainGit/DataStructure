@@ -26,6 +26,21 @@ public class Ch09RbTreeTest {
     }
 
     /**
+     * 测试完全有序的节点插入
+     */
+    @Test
+    public void test4() {
+        rbTree.insert(1);
+        rbTree.insert(2);
+        rbTree.insert(3);
+        rbTree.insert(4);
+        rbTree.insert(5);
+        rbTree.insert(6);
+        rbTree.insert(7);
+        rbTree.insert(8);
+    }
+
+    /**
      * 测试左内联节点
      */
     @Test

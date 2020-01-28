@@ -18,32 +18,32 @@ public class RbNode<T extends Comparable<T>> {
     /**
      * 节点中的数据
      */
-    private T data;
+    protected T data;
 
     /**
      * 表明红黑节点 true 表明是黑节点 false 表明是红节点
      */
-    private RbEnum rbEnum;
+    protected RbEnum rbEnum;
 
     /**
      * 当前节点是父节点的什么节点
      */
-    private LrEnum lrEnum;
+    protected LrEnum lrEnum;
 
     /**
      * 左子节点
      */
-    private RbNode<T> leftChild;
+    protected RbNode<T> leftChild;
 
     /**
      * 右子节点
      */
-    private RbNode<T> rightChild;
+    protected RbNode<T> rightChild;
 
     /**
      * 父亲节点
      */
-    private RbNode<T> parentNode;
+    protected RbNode<T> parentNode;
 
     /**
      * 当前节点是不是红色节点
@@ -57,6 +57,20 @@ public class RbNode<T extends Comparable<T>> {
      */
     public boolean isBlack() {
         return this.rbEnum == RbEnum.BLACK;
+    }
+
+    /**
+     * 判断当前节点是不是父节点的左子节点
+     */
+    public boolean isLeft() {
+        return ObjectUtil.isNotNull(this.lrEnum) && this.lrEnum == LrEnum.LEFT;
+    }
+
+    /**
+     * 判断当前节点是不是父节点的右子节点
+     */
+    public boolean isRight() {
+        return ObjectUtil.isNotNull(this.lrEnum) && this.lrEnum == LrEnum.RIGHT;
     }
 
     /**
@@ -76,10 +90,9 @@ public class RbNode<T extends Comparable<T>> {
                 "data=" + data +
                 ", rbEnum=" + rbEnum +
                 ", lrEnum=" + lrEnum +
-                ", hasLeftChild=" + ObjectUtil.isNotNull(this.getLeftChild()) +
-                ", hasRightChild=" + ObjectUtil.isNotNull(this.getRightChild()) +
-                ", hasParentNode=" + ObjectUtil.isNotNull(this.getParentNode()) +
-                " and parentNode is " + (ObjectUtil.isNotNull(this.getParentNode()) ? this.getParentNode().getData() : "null") +
+                ", leftChild=" + (ObjectUtil.isNotNull(this.getLeftChild()) ? leftChild.getData() : "null") +
+                ", rightChild=" + (ObjectUtil.isNotNull(this.getRightChild()) ? rightChild.getData() : "null") +
+                ", parentNode is " + (ObjectUtil.isNotNull(this.getParentNode()) ? this.getParentNode().getData() : "null") +
                 '}';
     }
 }
