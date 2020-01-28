@@ -45,31 +45,35 @@ public class RbTree<T extends Comparable<T>> {
         // 查找当前新节点能插入的位置
         // 如果根节点为空 那么直接将新增节点置为父节点 同时需要进行变色 为了满足规则2
         if(ObjectUtil.isNull(this.root)) {
-            newNode.setRbEnum(RbEnum.BLACK);
+            newNode.rbEnum = RbEnum.BLACK;
             this.root = newNode;
         } else {
-            // 当前正在遍历的节点
+            // 当前正在遍历的节点 从根节点开始进行遍历
             RbNode<T> currentNode = this.root;
-            // 父节点
-            RbNode<T> parentNode = null;
-            // 当前节点[要插入的节点]和父节点关系
-            int lrCp = -1;
+            // 遍历查找要插入的节点的位置
             while(true) {
                 // 先查询当前节点是否是黑色节点 如果是再判断是不是有两个红色节点
                 if(currentNode.isBlack() && currentNode.isPrefect()) {
                     // 如果子节点是红色的 那么先需要进行颜色的变换
-                    if(currentNode.getLeftChild().isRed()) {
-                        currentNode.getLeftChild().setRbEnum(RbEnum.BLACK);
-                        currentNode.getRightChild().setRbEnum(RbEnum.BLACK);
+                    if(currentNode.leftChild.isRed() && currentNode.rightChild.isRed()) {
+                        currentNode.leftChild.rbEnum = RbEnum.BLACK;
+                        currentNode.rightChild.rbEnum = RbEnum.BLACK;
                         // 需要判断当前节点是不是根节点 如果是根节点 那么根节点需要变成黑色
                         if(this.root != currentNode) {
                             currentNode.setRbEnum(RbEnum.RED);
                             // 变完颜色之前之后就需要调整数的结构
-                            RbNode<T> upDownParent = currentNode.getParentNode();
-                            RbNode<T> upDownGrandParent = upDownParent.getParentNode();
                             // 如果从上至下的直接父节点已经是红色，因为此次的变色出现红-红冲突
-                            // 然后引导需要进行树的旋转
-                            if(upDownParent.getParentNode().isRed()) {
+                            // 然后引导需要进行树的旋转 这也是两种情况
+                            // 内联节点和外联节点
+                            if(currentNode.parentNode.isRed()) {
+                                // 优先处理所有的内联节点 将其转换为外联节点
+                                // 下面仅处理外联节点即可
+                                if((currentNode.lrEnum.ordinal() ^ currentNode.parentNode.lrEnum.ordinal()) == 1) {
+                                    // 当知道异或的结果的时候 只要判断一边就可以
+                                    if(currentNode.isLeft()) {
+
+                                    }
+                                }
                             }
                         }
                     }
@@ -77,108 +81,100 @@ public class RbTree<T extends Comparable<T>> {
                 // 如果当前遍历的节点比要插入的节点大
                 // 不如反方向的比较好理解 因为那样顺着人的意思
                 // 即比较当前要插入的节点和之前的节点的对比
-                if(data.compareTo(currentNode.getData()) > 0) {
+                if(data.compareTo(currentNode.data) > 0) {
                     // 如果当前节点有右子节点 那么往右
-                    if(ObjectUtil.isNotNull(currentNode.getRightChild())) {
+                    if(ObjectUtil.isNotNull(currentNode.rightChild)) {
                         // 如果向右查找 那么表明父节点是祖父节点的右节点
-                        currentNode = currentNode.getRightChild();
+                        currentNode = currentNode.rightChild;
                     } else {
                         // 否则的话已经找到了结尾 应该在当前节点的右边插入当前元素
-                        lrCp = 0;
+                        // 其实可以在遍历结束之时直接插入元素
+                        currentNode.rightChild = newNode;
+                        newNode.lrEnum = LrEnum.RIGHT;
+                        newNode.parentNode = currentNode;
                         break;
                     }
-                } else if(data.compareTo(currentNode.getData()) < 0) {
+                } else if(data.compareTo(currentNode.data) < 0) {
                     // 如果当前节点有左子节点 那么往左
-                    if(ObjectUtil.isNotNull(currentNode.getLeftChild())) {
+                    if(ObjectUtil.isNotNull(currentNode.leftChild)) {
                         // 如果向左查找 那么表明父节点是祖父节点的左节点
-                        currentNode = currentNode.getLeftChild();
+                        currentNode = currentNode.leftChild;
                     } else {
                         // 否则的话已经找到了结尾 应该在当前节点的左边插入当前元素
-                        lrCp = 1;
+                        // 其实可以在遍历结束之时直接插入元素
+                        currentNode.leftChild = newNode;
+                        newNode.lrEnum = LrEnum.LEFT;
+                        newNode.parentNode = currentNode;
                         break;
                     }
                 }
             }
-            parentNode = currentNode;
-            // 当前节点就是最后找到的要插入的节点的位置
-            newNode.setParentNode(parentNode);
-            if(lrCp == 1) {
-                newNode.setLrEnum(LrEnum.LEFT);
-                parentNode.setLeftChild(newNode);
-            } else {
-                newNode.setLrEnum(LrEnum.RIGHT);
-                parentNode.setRightChild(newNode);
-            }
             // 判断一下是否有违背红黑树的存在 如果有就需要做旋转
             // 判断一下父节点和子节点是否冲突
-            if(parentNode.isRed()) {
+            if(currentNode.isRed()) {
                 // 因为是直接在叶子节点完成的插入 那么就会有四种情况 俩种大情况
                 // 俩种大情况为内联节点或者外联节点
                 // 我们先优先处理内联节点变为外联节点 那么都变为外联节点的是就可以直接一起处理了
                 // 先处理内联节点
-                int parentLr = parentNode.getLrEnum().ordinal();
                 // 找到祖父节点
-                RbNode<T> grandParent = parentNode.getParentNode();
-                if((lrCp ^ parentLr) == 1) {
-                    // 需要进行右旋
-                    if(parentLr == 1) {
-                        newNode.setLrEnum(LrEnum.LEFT);
-                        grandParent.setLeftChild(newNode);
+                RbNode<T> parentNode = currentNode.parentNode;
+                if((newNode.lrEnum.ordinal() ^ currentNode.lrEnum.ordinal()) == 1) {
+                    // 当异或运算为1的时候 其实判断一边就已经知道了另外的一边 没必要进行两次不同的判断
+                    // 如果 右 -> 左 的外联节点 就需要进行子树的右旋
+                    if(newNode.isLeft()) {
+                        parentNode.rightChild = newNode;
+                        newNode.lrEnum = LrEnum.RIGHT;
+                        newNode.rightChild = currentNode;
+                        currentNode.leftChild = null;
                     } else {
-                        newNode.setLrEnum(LrEnum.RIGHT);
-                        grandParent.setRightChild(newNode);
+                        parentNode.leftChild = newNode;
+                        newNode.lrEnum = LrEnum.LEFT;
+                        newNode.leftChild = currentNode;
+                        currentNode.rightChild = null;
                     }
-                    if(lrCp == 1) {
-                        parentNode.setLrEnum(LrEnum.RIGHT);
-                        newNode.setRightChild(parentNode);
-                    } else {
-                        parentNode.setLrEnum(LrEnum.LEFT);
-                        newNode.setLeftChild(parentNode);
-                    }
-                    newNode.setParentNode(grandParent);
-                    parentNode.setLeftChild(null);
-                    parentNode.setRightChild(null);
-                    parentNode.setParentNode(newNode);
-                    lrCp = lrCp ^ 1;
-                    newNode = parentNode;
-                    parentNode = newNode.getParentNode();
+                    currentNode.parentNode = newNode;
+                    newNode.parentNode = parentNode;
+                    // 做完内联向外联的变换之后 需要跳转current和new的指向 方便下面做处理
+                    newNode = currentNode;
+                    currentNode = newNode.parentNode;
                 }
                 // 目前已经处理了所有的内联节点 现在全部的变成了外联节点
                 // 找到祖父的父节点
-                RbNode<T> grandParentParent = grandParent.getParentNode();
-                // 如何处理外联节点?
-                // 将父节点变为黑色 同时将祖父节点变为红色
-                parentNode.setRbEnum(RbEnum.BLACK);
-                grandParent.setRbEnum(RbEnum.RED);
-                grandParent.setLeftChild(null);
-                grandParent.setRightChild(null);
-                grandParent.setParentNode(parentNode);
-                if(lrCp == 1) {
-                    // 左内联节点
-                    grandParent.setLrEnum(LrEnum.RIGHT);
-                    parentNode.setRightChild(grandParent);
+                RbNode<T> grandParent = parentNode.parentNode;
+                // 如何处理外联结构的节点 先变色 后旋转
+                // 将新节点的父节点变为黑色 同时将祖父节点变为红色
+                currentNode.rbEnum = RbEnum.BLACK;
+                parentNode.rbEnum = RbEnum.RED;
+                // 判断一下是左旋还是右旋
+                if(newNode.isLeft()) {
+                    // 如果一直是左方向节点 那么进行右旋
+                    currentNode.rightChild = parentNode;
+                    parentNode.lrEnum = LrEnum.RIGHT;
+                    parentNode.leftChild = null;
                 } else {
-                    grandParent.setLrEnum(LrEnum.LEFT);
-                    parentNode.setLeftChild(grandParent);
+                    // 否则左旋
+                    currentNode.leftChild = parentNode;
+                    parentNode.lrEnum = LrEnum.LEFT;
+                    parentNode.rightChild = null;
                 }
+                parentNode.parentNode = currentNode;
                 // 处理祖父节点
-                if(ObjectUtil.isNotNull(grandParentParent)) {
-                    parentNode.setParentNode(grandParentParent);
-                    if(grandParentParent.getLeftChild() == grandParent) {
+                if(ObjectUtil.isNotNull(grandParent)) {
+                    if(grandParent.leftChild == parentNode) {
                         // 左子树
-                        parentNode.setLrEnum(LrEnum.LEFT);
-                        grandParentParent.setLeftChild(parentNode);
+                        currentNode.lrEnum = LrEnum.LEFT;
+                        grandParent.leftChild = currentNode;
                     } else {
                         // 右子树
-                        parentNode.setLrEnum(LrEnum.RIGHT);
-                        grandParentParent.setRightChild(parentNode);
+                        parentNode.lrEnum = LrEnum.RIGHT;
+                        grandParent.rightChild = currentNode;
                     }
                 } else {
                     // 如果为空 那么就是根节点
-                    this.root = parentNode;
-                    parentNode.setParentNode(null);
-                    parentNode.setLrEnum(null);
+                    this.root = currentNode;
+                    currentNode.setLrEnum(null);
                 }
+                currentNode.parentNode = grandParent;
             }
         }
     }
