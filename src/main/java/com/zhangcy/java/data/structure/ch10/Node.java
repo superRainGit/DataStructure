@@ -37,15 +37,41 @@ public class Node<T extends Comparable<T>> {
     /**
      * 判断是否是叶子节点
      */
-    private boolean isLeaf() {
+    public boolean isLeaf() {
         return CollUtil.isEmpty(this.nodeList);
     }
 
     /**
      * 判断当前节点是否为满数据项
      */
-    private boolean isFull() {
+    public boolean isFull() {
         return CollUtil.isNotEmpty(this.dataItemList) && this.dataItemList.size() == 3;
+    }
+
+    /**
+     * 判断能否从当前节点的数据域中找到想要查找的元素
+     */
+    public boolean hasFindVal(T data) {
+        return CollUtil.isNotEmpty(this.dataItemList) && this.dataItemList.contains(new DataItem<>(data));
+    }
+
+    /**
+     * 因为234树的特殊性质:
+     *  1个数据元素的节点有两个分叉
+     *  2个数据元素的节点有三个分叉
+     *  3个数据元素的节点有四个分叉
+     * 所以判断要查找的元素和当前节点的数据元素之前的关系 然后获取指定位置的元素
+     * 查找需要向哪个方向查询数据
+     */
+    public Node<T> findNextChild(T data) {
+        int i = 0;
+        for(; i < dataItemList.size(); i++) {
+            // 如果比左边的元素小 那么直接从左边开始查找
+            if(data.compareTo(dataItemList.get(i).getData()) < 0) {
+                break;
+            }
+        }
+        return nodeList.get(i);
     }
 
     /**
