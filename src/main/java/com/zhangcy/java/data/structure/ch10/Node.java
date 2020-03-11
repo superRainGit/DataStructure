@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -17,12 +18,12 @@ public class Node<T extends Comparable<T>> {
     /**
      * 节点中的数据项
      */
-    List<DataItem<T>> dataItemList;
+    List<DataItem<T>> dataItemList = CollUtil.newArrayList();
 
     /**
      * 节点中的子节点项
      */
-    List<Node<T>> nodeList;
+    List<Node<T>> nodeList = CollUtil.newArrayList();
 
     /**
      * 当前节点中数据项的个数
@@ -56,6 +57,30 @@ public class Node<T extends Comparable<T>> {
     }
 
     /**
+     * 获取当前节点的中间数据
+     * 因为获取的时候数据节点是满的 所以可以直接获取
+     */
+    public T getMiddleData() {
+        return this.dataItemList.get(1).getData();
+    }
+
+    /**
+     * 获取当前节点的末位数据
+     * 因为获取的时候数据节点是满的 所以可以直接获取
+     */
+    public T getLastData() {
+        return this.dataItemList.get(2).getData();
+    }
+
+    /**
+     * 获取当前节点的初位数据
+     * 因为获取的时候数据节点是满的 所以可以直接获取
+     */
+    public T getFirstData() {
+        return this.dataItemList.get(0).getData();
+    }
+
+    /**
      * 因为234树的特殊性质:
      *  1个数据元素的节点有两个分叉
      *  2个数据元素的节点有三个分叉
@@ -72,6 +97,32 @@ public class Node<T extends Comparable<T>> {
             }
         }
         return nodeList.get(i);
+    }
+
+    /**
+     * 将新增的数据放入到节点中
+     */
+    public void insertNewData2Node(T data) {
+        this.dataSize++;
+        DataItem<T> newData = new DataItem<>(data);
+        this.dataItemList.add(newData);
+        CollUtil.sort(dataItemList, Comparator.comparing(DataItem::getData));
+    }
+
+    /**
+     * 移除中间元素
+     */
+    public void removeMiddleData() {
+        this.dataSize--;
+        this.dataItemList.remove(1);
+    }
+
+    /**
+     * 移除中间元素
+     */
+    public void removeLastData() {
+        this.dataSize--;
+        this.dataItemList.remove(2);
     }
 
     /**
