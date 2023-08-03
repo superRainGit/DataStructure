@@ -53,7 +53,7 @@ public class Ch03SortTest {
 
     @Test
     public void testSelectSort() {
-        int maxSize = 100000;
+        int maxSize = 20;
         ArraySel arraySel = new ArraySel(maxSize);
 
         // 10W个随机数据 3秒
@@ -67,22 +67,22 @@ public class Ch03SortTest {
 //        }
 
         // 10W个顺序数据 // 1.418秒
-        for (int i = 0; i < maxSize; i++) {
-            arraySel.insert(i);
-        }
+//        for (int i = 0; i < maxSize; i++) {
+//            arraySel.insert(i);
+//        }
 
 
         // [1, 4, 3, 9, 11, 18, 15, 14]
-//        arraySel.insert(1);
-//        arraySel.insert(4);
-//        arraySel.insert(3);
-//        arraySel.insert(9);
-//        arraySel.insert(11);
-//        arraySel.insert(18);
-//        arraySel.insert(15);
-//        arraySel.insert(14);
+        arraySel.insert(1);
+        arraySel.insert(4);
+        arraySel.insert(3);
+        arraySel.insert(9);
+        arraySel.insert(11);
+        arraySel.insert(18);
+        arraySel.insert(15);
+        arraySel.insert(14);
 
-//        arraySel.display();
+        arraySel.display();
 
         long start = System.currentTimeMillis();
 
@@ -92,7 +92,7 @@ public class Ch03SortTest {
 
         System.out.println("cost " + (end - start) / 1000d );
 
-//        arraySel.display();
+        arraySel.display();
     }
 
     @Test

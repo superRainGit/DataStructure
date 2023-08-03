@@ -37,7 +37,7 @@ public class ArraySel {
     public void selectSort() {
         for (int j = 0; j < currIndex; j++) {
             int minPos = j;
-            for(int i = j; i < currIndex; i++) {
+            for(int i = j + 1; i < currIndex; i++) {
                 if(arr[i] < arr[minPos]) {
                     minPos = i;
                 }
